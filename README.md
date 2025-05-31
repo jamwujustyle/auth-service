@@ -1,4 +1,4 @@
 # eldorado
 backend of marketplace built on fastapi. 
 
-** exploring backend development with async nature
+** exploring python backend development with async nature
