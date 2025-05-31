@@ -1,0 +1,27 @@
+services:
+  server:
+    extends:
+      file: docker-compose.yml
+      service: server
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    environment:
+      DEBUG: ${DEBUG:-true}
+    volumes:
+      - ./:/app:cached
+    ports:
+      - "7000:7000"
+  db:
+    extends:
+      file: docker-compose.yml
+      service: db
+    env_file:
+      - ./.env.dev
+    environment:
+      POSTGRES_DB: ${DB_NAME:-db}
+      POSTGRES_USER: ${DB_USER:-dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pass}
+    ports:
+      - "${DB_PORT:-5432}:5432"
