@@ -17,3 +17,5 @@ httpx  #for async (probably)
 # TESTING
 pytest-asyncio #for testing async views (probably)
 pytest
+# EVENT
+aiokafka
