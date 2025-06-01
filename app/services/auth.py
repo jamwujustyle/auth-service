@@ -5,7 +5,8 @@ from app.schemas.user import (
     UserLogin,
     UserLoginResponse,
 )
-from tortoise.exceptions import IntegrityError
+from app.core.security import JWTToken
+from datetime import timedelta
 
 
 async def register_user(user_data=UserCreate) -> "UserCreateResponse":
@@ -35,7 +36,11 @@ async def login_user(creds: UserLogin) -> "UserLoginResponse":
     if not user.check_password(password=creds.password):
         raise ValueError("Invalid credentials")
 
+    access = JWTToken.create_access_token(data={"sub": str(user.id)})
+    refresh = JWTToken.create_access_token(
+        data={"sub": str(user.id)}, expires_delta=timedelta(days=88)
+    )
     return UserLoginResponse(
-        access="dummy",
-        refresh="dummy",
+        access=access,
+        refresh=refresh,
     )
