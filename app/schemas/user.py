@@ -27,8 +27,3 @@ class UserLogin(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class UserLoginResponse(BaseModel):
-    access: str
-    refresh: str

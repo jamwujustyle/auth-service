@@ -3,10 +3,10 @@ from app.schemas.user import (
     UserCreate,
     UserCreateResponse,
     UserLogin,
-    UserLoginResponse,
 )
 from app.core.security import JWTToken
 from datetime import timedelta
+from app.schemas.token import TokenRefresh, TokenPair, TokenAccess
 
 
 async def register_user(user_data=UserCreate) -> "UserCreateResponse":
@@ -27,7 +27,7 @@ async def register_user(user_data=UserCreate) -> "UserCreateResponse":
     )
 
 
-async def login_user(creds: UserLogin) -> "UserLoginResponse":
+async def login_user(creds: UserLogin) -> "TokenPair":
     user = await User.get_or_none(email=creds.email)
 
     if not user:
@@ -40,7 +40,14 @@ async def login_user(creds: UserLogin) -> "UserLoginResponse":
     refresh = JWTToken.create_access_token(
         data={"sub": str(user.id)}, expires_delta=timedelta(days=88)
     )
-    return UserLoginResponse(
+    return TokenPair(
         access=access,
         refresh=refresh,
     )
+
+
+async def refresh(refresh_token: TokenRefresh) -> "TokenAccess":
+    payload = JWTToken.decode_token(refresh_token.refresh)
+    user_id = payload["sub"]
+    new_access = JWTToken.create_access_token(data={"sub": str(user_id)})
+    return TokenAccess(access=new_access)
