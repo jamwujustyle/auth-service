@@ -1,10 +1,10 @@
 from pydantic import BaseModel, EmailStr, UUID4
 
 
-class User(BaseModel):
+class UserCreate(BaseModel):
     id: UUID4
     name: str
     email: EmailStr
 
     class Config:
-        orm_model = True
+        from_attribures = True

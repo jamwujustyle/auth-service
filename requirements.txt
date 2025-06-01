@@ -7,7 +7,7 @@ Faker
 uvicorn
 passlib[bcrypt]
 python-jose[cryptography]
-pydantic #for validation and type enforcement
+pydantic[email] #for validation and type enforcement
 aerich #for db migrations
 pytest
 pytest-asyncio #for testing async views (probably)

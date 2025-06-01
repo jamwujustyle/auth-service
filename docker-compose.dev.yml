@@ -10,7 +10,7 @@ services:
     environment:
       DEBUG: ${DEBUG:-true}
     volumes:
-      - ./:/app:cached
+      - ./:/auth-service:cached
     ports:
       - "7000:7000"
   auth-db:

@@ -4,6 +4,7 @@ from uuid import uuid4
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.exceptions import InvalidKey
 import os
 
 
@@ -22,3 +23,21 @@ class User(Model):
             iterations=100000,
             backend=default_backend,
         )
+        hashed_password = kdf.derive(password.encode())
+        self.password = salt + hashed_password
+
+    def check_password(self, password: str) -> bool:
+        salt = self.password[:16]
+        stored_hash = self.password[16:]
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt,
+            iterations=100000,
+            backend=default_backend(),
+        )
+        try:
+            kdf.verify(password.encode(), stored_hash)
+            return True
+        except InvalidKey:
+            return False

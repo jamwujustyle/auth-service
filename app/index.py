@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Path
-from api.routes import auth_router
+
+from .api.routes.auth import router
 
 app = FastAPI()
 
@@ -9,4 +10,4 @@ def home():
     return "<h1>HELLO WORLD</h1>"
 
 
-app.include_router(auth_router, prefix="/auth")
+app.include_router(router, prefix="/auth")
