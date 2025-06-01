@@ -16,8 +16,8 @@ else
     }
 
     echo "🧹 Cleaning up ports..."
-    free_port 5432
-    free_port 7000
+    # free_port 5432
+    free_port 1000
 
 
     echo "🛑 Stopping existing containers..."

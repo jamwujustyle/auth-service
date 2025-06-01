@@ -8,6 +8,7 @@ class User(Model):
     name = fields.CharField(max_length=12)
     email = fields.CharField(max_length=255, unique=True)
     password = fields.CharField(max_length=128)
+    is_verified = fields.BooleanField(default=False)
 
     def set_password(self, password: str):
         self.password = bcrypt.hash(password)
