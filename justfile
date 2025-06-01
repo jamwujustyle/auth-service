@@ -12,4 +12,4 @@ upgrade:
     docker exec -it auth-service sh -c "aerich upgrade"
 
 cli name:
-    faskapi generate route {{name}}
+    fastapi generate route {{name}}
