@@ -7,6 +7,10 @@ services:
       context: .
       dockerfile: Dockerfile
       target: development
+    command:
+      sh -c "aerich migrate && aerich upgrade &&
+              uvicorn app.index:app --host 0.0.0.0 --port 1000 --reload
+            "
     environment:
       DEBUG: ${DEBUG:-true}
     volumes:
