@@ -1,7 +1,7 @@
 
 services:
-  server:
-    container_name: eldorado_server
+  auth-service:
+    container_name: auth-service
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,19 +9,19 @@ services:
     volumes:
       - ./:/app
     depends_on:
-      - db
+      - auth-db
 
-  db:
+  auth-db:
     image: postgres:16.2-alpine
-    container_name: eldorado_db
+    container_name: auth-db
     environment:
-      POSTGRES_DB: db
+      POSTGRES_DB: auth-db
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: pass
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - auth_data:/var/lib/postgresql/data
 
 volumes:
-  db_data:
+  auth_data:

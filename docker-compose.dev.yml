@@ -1,8 +1,8 @@
 services:
-  server:
+  auth-service:
     extends:
       file: docker-compose.yml
-      service: server
+      service: auth-service
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,14 +13,14 @@ services:
       - ./:/app:cached
     ports:
       - "7000:7000"
-  db:
+  auth-db:
     extends:
       file: docker-compose.yml
-      service: db
+      service: auth-db
     env_file:
       - ./.env.dev
     environment:
-      POSTGRES_DB: ${DB_NAME:-db}
+      POSTGRES_DB: ${DB_NAME:-auth-db}
       POSTGRES_USER: ${DB_USER:-dev}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-pass}
     ports:
