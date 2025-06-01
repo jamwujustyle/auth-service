@@ -13,6 +13,8 @@ services:
       - ./:/auth-service:cached
     ports:
       - "1000:1000"
+    user: "1000:1000"
+
   auth-db:
     extends:
       file: docker-compose.yml

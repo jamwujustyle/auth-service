@@ -1,6 +1,11 @@
 from fastapi import APIRouter, status, HTTPException
-from app.services.auth import register_user
-from app.schemas.user import UserCreate, UserResponse
+from app.services.auth import register_user, login_user
+from app.schemas.user import (
+    UserCreate,
+    UserCreateResponse,
+    UserLogin,
+    UserLoginResponse,
+)
 from tortoise.transactions import in_transaction
 from tortoise.exceptions import IntegrityError
 
@@ -8,7 +13,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/register", status_code=status.HTTP_201_CREATED, response_model=UserResponse
+    "/register", status_code=status.HTTP_201_CREATED, response_model=UserCreateResponse
 )
 async def register(user: UserCreate):
     try:
@@ -26,5 +31,10 @@ async def register(user: UserCreate):
         )
 
 
-@router.post("/login")
-async def login(): ...
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=UserLoginResponse)
+async def login(creds: UserLogin):
+    try:
+        async with in_transaction():
+            return await login_user(creds)
+    except ValueError as ex:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(ex))

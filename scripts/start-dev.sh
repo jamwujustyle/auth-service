@@ -21,11 +21,11 @@ else
 
 
     echo "🛑 Stopping existing containers..."
-    docker compose -f docker-compose.yml -f docker-compose.dev.yml down
+    docker compose down
 
     echo "🏗️  Building and starting development containers..."
 
-    if docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build; then
+    if docker compose up --build; then
         echo "✨ Development environment ready!"
         echo "📊 Database: localhost:5432"
     else
