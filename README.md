@@ -33,6 +33,7 @@ This service handles user registration, login, JWT token issuance, and basic use
 
 ```bash
 ./scripts/setup-env.sh
+```
 
 ### 2. Start backend
 ```bash
