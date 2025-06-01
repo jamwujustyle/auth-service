@@ -1,8 +1,8 @@
 #!/bin/bash
 echo "STARTING IN DEV MODE"
 
-if [ ! -f .env.dev ]; then
-    echo "unable to locate .env.dev, run /scripts/setup-env.sh first"
+if [ ! -f .env ]; then
+    echo "unable to locate .env, run /scripts/setup-env.sh first"
 else
     free_port(){
         port=$1

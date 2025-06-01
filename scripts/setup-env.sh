@@ -2,11 +2,11 @@
 
 echo "Creating mock env vars"
 
-if [ -f .env.dev ] ; then
+if [ -f .env ] ; then
     echo "env exists"
 else
-    echo "creating .env.dev file.."
-    cat > .env.dev << EOF
+    echo "creating .env file.."
+    cat > .env << EOF
 BUILD_TARGET=dev
 DEBUG=true
 CI=true
@@ -22,5 +22,5 @@ CORS_ALLOWED_HOSTS=http://localhost:3000,http://127.0.0.1:3000
 EOF
 
     echo "created env file at $(pwd) with vars: "
-    cat .env.dev
+    cat .env
 fi

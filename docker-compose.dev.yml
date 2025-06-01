@@ -12,13 +12,13 @@ services:
     volumes:
       - ./:/auth-service:cached
     ports:
-      - "7000:7000"
+      - "1000:1000"
   auth-db:
     extends:
       file: docker-compose.yml
       service: auth-db
     env_file:
-      - ./.env.dev
+      - ./.env
     environment:
       POSTGRES_DB: ${DB_NAME:-auth-db}
       POSTGRES_USER: ${DB_USER:-dev}

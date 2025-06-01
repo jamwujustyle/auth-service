@@ -1,7 +1,21 @@
 from app.models.user import User
-from uuid import uuid4
+from app.schemas.user import UserCreate, UserResponse
 
 
-async def register_user(id: uuid4, email: str, password: str) -> "User":
+async def register_user(user_data=UserCreate) -> UserResponse:
 
-    user = User.create(id=uuid4, email=email, password=password)
+    user = User(
+        id=user_data.id,
+        name=user_data.name,
+        email=user_data.email,
+    )
+
+    user.set_password(user_data.password)
+
+    await user.save()
+
+    return UserResponse(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+    )

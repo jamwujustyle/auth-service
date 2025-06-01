@@ -29,5 +29,5 @@ USER jam
 
 FROM base AS development
 COPY . /auth-service
-EXPOSE 7000
+EXPOSE 1000
 CMD ["uvicorn", "app.index:app", "--host", "0.0.0.0", "--port", "1000", "--reload"]

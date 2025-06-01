@@ -1,14 +1,19 @@
 fastapi
 fastapi-cli #! apparently useful
+uvicorn
+# DB
 asyncpg #async psycopg
 tortoise-orm # async orm
+tomlkit
+aerich #for db migrations
+# SECURITY
+python-jose[cryptography]
+passlib[bcrypt]
+# CONFIG
+pydantic[email] #for validation and type enforcement
 dotenv
 Faker
-uvicorn
-passlib[bcrypt]
-python-jose[cryptography]
-pydantic[email] #for validation and type enforcement
-aerich #for db migrations
-pytest
-pytest-asyncio #for testing async views (probably)
 httpx  #for async (probably)
+# TESTING
+pytest-asyncio #for testing async views (probably)
+pytest

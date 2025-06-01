@@ -1,10 +1,19 @@
-from pydantic import BaseModel, EmailStr, UUID4
+from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 
 class UserCreate(BaseModel):
-    id: UUID4
+    name: str
+    email: EmailStr
+    password: str
+
+    class Config:
+        from_attributes = True
+
+
+class UserResponse(BaseModel):
     name: str
     email: EmailStr
 
     class Config:
-        from_attribures = True
+        from_attributes = True
