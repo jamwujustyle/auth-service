@@ -6,7 +6,7 @@ from app.schemas.user import (
 )
 from app.core.security import JWTToken
 from datetime import timedelta
-from app.schemas.token import TokenRefresh, TokenPair, TokenAccess
+from app.schemas.verification import TokenRefresh, TokenPair, TokenAccess
 
 
 async def register_user(user_data=UserCreate) -> "UserCreateResponse":

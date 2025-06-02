@@ -7,7 +7,8 @@ from app.schemas.user import (
 )
 from tortoise.transactions import in_transaction
 from tortoise.exceptions import IntegrityError
-from app.schemas.token import TokenRefresh, TokenAccess, TokenPair
+from app.schemas.verification import TokenRefresh, TokenAccess, TokenPair
+from kafka_producer import publish_user_registered_event
 
 router = APIRouter()
 

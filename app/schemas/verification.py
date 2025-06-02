@@ -12,3 +12,8 @@ class TokenAccess(BaseModel):
 class TokenPair(BaseModel):
     refresh: str
     access: str
+
+
+class EmailVerificationRequirest(BaseModel):
+    user_id: int
+    token: str
