@@ -6,7 +6,12 @@ from app.schemas.user import (
 )
 from app.core.security import JWTToken
 from datetime import timedelta
-from app.schemas.verification import TokenRefresh, TokenPair, TokenAccess
+from app.schemas.verification import (
+    TokenRefresh,
+    TokenPair,
+    TokenAccess,
+    EmailVerificationRequest,
+)
 
 
 async def register_user(user_data=UserCreate) -> "UserCreateResponse":
@@ -27,6 +32,30 @@ async def register_user(user_data=UserCreate) -> "UserCreateResponse":
     )
 
 
+async def verify_user_email(user_data=EmailVerificationRequest) -> "TokenPair":
+    user = await User.get_or_none(id=user_data.user_id)
+
+    if not user:
+        raise ValueError("User not found")
+
+    if user.is_verified:
+        raise ValueError("User already verified")
+
+    if not user.verify_token(user_data.token):
+        raise ValueError("Invalid or expired token")
+
+    user.is_verified = True
+    user.verification_token = None
+    user.verification_token_expires = None
+    await user.save()
+
+    access = JWTToken.create_token(data={"sub": str(user_data.user_id)})
+    refresh = JWTToken.create_token(
+        data={"sub": str(user_data.user_id)}, expires_delta=timedelta(days=88)
+    )
+    return TokenPair(access=access, refresh=refresh)
+
+
 async def login_user(creds: UserLogin) -> "TokenPair":
     user = await User.get_or_none(email=creds.email)
 
@@ -35,6 +64,9 @@ async def login_user(creds: UserLogin) -> "TokenPair":
 
     if not user.check_password(password=creds.password):
         raise ValueError("Invalid credentials")
+
+    if not user.is_verified:
+        raise ValueError("Please verify your email address before logging in")
 
     access = JWTToken.create_access_token(data={"sub": str(user.id)})
     refresh = JWTToken.create_access_token(

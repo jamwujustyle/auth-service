@@ -41,7 +41,7 @@ class JWTToken:
     ACCESS_TOKEN_EXPIRE_MINUES = 314159
 
     @classmethod
-    def create_access_token(cls, data: dict, expires_delta: timedelta = None):
+    def create_token(cls, data: dict, expires_delta: timedelta = None):
         to_encode = data.copy()
         expire = datetime.utcnow() + (
             expires_delta or timedelta(minutes=cls.ACCESS_TOKEN_EXPIRE_MINUES)

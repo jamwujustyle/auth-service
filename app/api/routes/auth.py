@@ -1,5 +1,5 @@
 from fastapi import APIRouter, status, HTTPException
-from app.services.auth import register_user, login_user, refresh
+from app.services.auth import register_user, login_user, refresh, verify_user_email
 from app.schemas.user import (
     UserCreate,
     UserCreateResponse,
@@ -7,8 +7,13 @@ from app.schemas.user import (
 )
 from tortoise.transactions import in_transaction
 from tortoise.exceptions import IntegrityError
-from app.schemas.verification import TokenRefresh, TokenAccess, TokenPair
-from kafka_producer import publish_user_registered_event
+from app.schemas.verification import (
+    TokenRefresh,
+    TokenAccess,
+    TokenPair,
+    EmailVerificationRequest,
+)
+from app.kafka_producer import publish_user_registered_event
 
 router = APIRouter()
 
@@ -19,7 +24,20 @@ router = APIRouter()
 async def register(user: UserCreate):
     try:
         async with in_transaction():
-            return await register_user(user)
+            user_response = await register_user(user)
+
+            await publish_user_registered_event(
+                {
+                    "user_id": user_response.id,
+                    "email": user_response.email,
+                    "name": user_response.name,
+                }
+            )
+            return {
+                "message": "Registration successful. Please check your email to verify your account.",
+                "user_id": user_response.id,
+            }
+
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -32,6 +50,17 @@ async def register(user: UserCreate):
         )
 
 
+@router.post("/verify-email", status_code=status.HTTP_200_OK, response_model=TokenPair)
+async def verify_email(verification_data: EmailVerificationRequest):
+    try:
+        async with in_transaction():
+            return await verify_user_email(
+                verification_data.user_id, verification_data.token
+            )
+    except ValueError as ex:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
+
+
 @router.post("/login", status_code=status.HTTP_200_OK, response_model=TokenPair)
 async def login(creds: UserLogin):
     try:
@@ -41,6 +70,8 @@ async def login(creds: UserLogin):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(ex))
 
 
-@router.post("/refresh", status_code=status.HTTP_200_OK, response_model=TokenAccess)
+@router.post(
+    "/refresh-token", status_code=status.HTTP_200_OK, response_model=TokenAccess
+)
 async def refresh_token(payload: TokenRefresh):
     return await refresh(payload)

@@ -14,6 +14,6 @@ class TokenPair(BaseModel):
     access: str
 
 
-class EmailVerificationRequirest(BaseModel):
+class EmailVerificationRequest(BaseModel):
     user_id: int
     token: str
