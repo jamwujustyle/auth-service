@@ -1,11 +1,16 @@
 from tortoise.models import Model
 from tortoise import fields
-from passlib.hash import bcrypt
+
+# from passlib.hash import bcrypt
 from uuid import uuid4
 import os
 import hmac
 import hashlib
 from datetime import datetime, timedelta
+import argon2
+from argon2 import PasswordHasher
+
+ph = PasswordHasher()
 
 
 class User(Model):
@@ -19,10 +24,15 @@ class User(Model):
     created_at = fields.DatetimeField(auto_now_add=True)
 
     def set_password(self, password: str):
-        self.password = bcrypt.hash(password)
+        self.password = ph.hash(password)
 
     def check_password(self, password: str) -> bool:
-        return bcrypt.verify(password, self.password)
+
+        try:
+            ph.verify(self.password, password)
+            return True
+        except argon2.exceptions.VerifyMismatchError:
+            return False
 
     def generate_verification_token(self):
         """Generate a secure verification token"""

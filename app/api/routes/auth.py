@@ -50,6 +50,24 @@ async def register(user: UserCreate):
         )
 
 
+@router.get("/verify-email", status_code=status.HTTP_200_OK)
+async def verify_email_get(user_id: int, token: str):
+    """GET endpoint for email verification (clickable links)"""
+    try:
+        async with in_transaction():
+            token_pair = await verify_user_email(user_id, token)
+            return {
+                "message": "Email verified successfully! You can now login.",
+                "access": token_pair.access,
+                "refresh": token_pair.refresh,
+            }
+    except ValueError as ex:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(ex),
+        )
+
+
 @router.post("/verify-email", status_code=status.HTTP_200_OK, response_model=TokenPair)
 async def verify_email(verification_data: EmailVerificationRequest):
     try:

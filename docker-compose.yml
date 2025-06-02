@@ -1,27 +1,57 @@
-
 services:
   auth-service:
     container_name: auth-service
     build:
       context: .
       dockerfile: Dockerfile
-      target: base
+      target: development
+    command:
+      sh -c "
+              aerich migrate && aerich upgrade &&
+              uvicorn app.index:app --host 0.0.0.0 --port 1000 --reload
+            "
+    environment:
+      DEBUG: ${DEBUG:-true}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-auth-db}
+      DB_USER: ${DB_USER:-dev}
+      DB_PASSWORD: ${DB_PASSWORD:-pass}
+    env_file:
+      - ./.env
     volumes:
-      - ./:/auth-service
+      - ./:/auth-service:cached
+    ports:
+      - "1000:1000"
+    user: "1000:1000"
     depends_on:
       - auth-db
+    networks:
+      - microservices-net
+      - auth-internal
 
   auth-db:
     image: postgres:16.2-alpine
     container_name: auth-db
     environment:
-      POSTGRES_DB: auth-db
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: ${DB_NAME:-auth-db}
+      POSTGRES_USER: ${DB_USER:-dev}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pass}
+    env_file:
+      - ./.env
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
       - auth_data:/var/lib/postgresql/data
+    networks:
+      - auth-internal
 
 volumes:
   auth_data:
+
+networks:
+  microservices-net:
+    external: true
+  auth-internal:
+    driver: bridge

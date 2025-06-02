@@ -11,6 +11,7 @@ load_dotenv()
 security = HTTPBearer()
 
 
+# TODO:
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ):

@@ -1,9 +1,7 @@
 # justfile
 
-run:
-    uvicorn app.index:app --reload
-
-
+start:
+    ./scripts/start-dev.sh
 
 migrate:
     docker exec -it auth-service sh -c "aerich migrate"

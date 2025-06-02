@@ -24,9 +24,13 @@ class KafkaProducer:
 
     async def send_message(self, topic: str, message: dict):
         if not self.producer:
-            await self.start()
-
-        await self.producer.send(topic, message)
+            print("Kafka producer not available, skipping message")
+            return
+        try:
+            await self.producer.send(topic, message)
+            print(f"Message sent to topic {topic}")
+        except Exception as ex:
+            print(f"Failed to send message to Kafka: {ex}")
 
 
 kafka_producer = KafkaProducer()
