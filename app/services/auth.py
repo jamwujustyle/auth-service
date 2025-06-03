@@ -14,7 +14,7 @@ from app.schemas.verification import (
 )
 
 
-async def register_user(user_data=UserCreate) -> "UserCreateResponse":
+async def register_user(user_data=UserCreate) -> UserCreateResponse:
 
     user = User(
         name=user_data.name,
@@ -26,6 +26,7 @@ async def register_user(user_data=UserCreate) -> "UserCreateResponse":
     await user.save()
 
     return UserCreateResponse(
+        message="Registration successful. Please check your email to verify your account.",
         id=user.id,
         name=user.name,
         email=user.email,

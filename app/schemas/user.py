@@ -12,9 +12,10 @@ class UserCreate(BaseModel):
 
 
 class UserCreateResponse(BaseModel):
+    message: str
     id: int
-    name: str
-    email: EmailStr
+    name: str = None
+    email: str = None
 
     class Config:
         from_attributes = True

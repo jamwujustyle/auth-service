@@ -13,6 +13,7 @@ from app.schemas.verification import (
     TokenPair,
     EmailVerificationRequest,
 )
+from ...configs.logging_config import logger
 from app.kafka_producer import publish_user_registered_event
 
 router = APIRouter()
@@ -25,18 +26,9 @@ async def register(user: UserCreate):
     try:
         async with in_transaction():
             user_response = await register_user(user)
-
-            await publish_user_registered_event(
-                {
-                    "user_id": user_response.id,
-                    "email": user_response.email,
-                    "name": user_response.name,
-                }
-            )
-            return {
-                "message": "Registration successful. Please check your email to verify your account.",
-                "user_id": user_response.id,
-            }
+            logger.critical(user_response)
+            await publish_user_registered_event(user_response.model_dump())
+            return user_response
 
     except IntegrityError:
         raise HTTPException(
