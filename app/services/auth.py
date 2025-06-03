@@ -22,7 +22,7 @@ async def register_user(user_data=UserCreate) -> UserCreateResponse:
     )
 
     user.set_password(user_data.password)
-
+    user.generate_verification_token()  # Generate and set the token
     await user.save()
 
     return UserCreateResponse(

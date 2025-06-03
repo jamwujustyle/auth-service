@@ -19,7 +19,7 @@ class KafkaProducer:
         )
         await self.producer.start()
         logger.critical(
-            f'Kakfa consumer started, connected to {os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")}'
+            f'Kakfa producer started, connected to {os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:9092")}'
         )
 
     async def stop(self):
