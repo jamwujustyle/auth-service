@@ -73,8 +73,8 @@ async def login_user(creds: UserLogin) -> "TokenPair":
     if not user.is_verified:
         raise ValueError("Please verify your email address before logging in")
 
-    access = JWTToken.create_access_token(data={"sub": str(user.id)})
-    refresh = JWTToken.create_access_token(
+    access = JWTToken.create_token(data={"sub": str(user.id)})
+    refresh = JWTToken.create_token(
         data={"sub": str(user.id)}, expires_delta=timedelta(days=88)
     )
     return TokenPair(
@@ -86,5 +86,5 @@ async def login_user(creds: UserLogin) -> "TokenPair":
 async def refresh(refresh_token: TokenRefresh) -> "TokenAccess":
     payload = JWTToken.decode_token(refresh_token.refresh)
     user_id = payload["sub"]
-    new_access = JWTToken.create_access_token(data={"sub": str(user_id)})
+    new_access = JWTToken.create_token(data={"sub": str(user_id)})
     return TokenAccess(access=new_access)
