@@ -22,6 +22,10 @@ DB_PORT=5432
 ALLOWED_HOSTS=http://localhost,127.0.0.1
 CORS_ALLOWED_HOSTS=http://localhost:3000,http://127.0.0.1:3000
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+
+ACCESS_TOKEN_EXPIRE_MINUTES=50000
+REFRESH_TOKEN_EXPIRE_DAYS=5000000
+JWT_ISSUER=auth-service
 EOF
 
     echo "created env file at $(pwd) with vars: "
