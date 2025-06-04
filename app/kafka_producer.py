@@ -1,7 +1,7 @@
 from aiokafka import AIOKafkaProducer
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from .configs.logging_config import logger
 
 
@@ -50,6 +50,6 @@ async def publish_user_registered_event(user_data: dict):
             "user_id": user_data["id"],
             "email": user_data["email"],
             "name": user_data["name"],
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         },
     )

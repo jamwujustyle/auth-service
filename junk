@@ -1,0 +1,11 @@
+auth-service  | INFO:     Application startup complete.
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - token: a385692f-22df-40ba-960e-d227b9bdf697 (user.py:43)
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - Secret at generation (first 8 chars): TE7zJ6OW (user.py:49)
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - signature: b8538803afdac8e79d2be797bea07d6c4195cbcd5a45a41a6f647ca66816126b (user.py:56)
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - GENERATED IN GENERATE_VERIFICATION_TOKEN:  (user.py:59)
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - token:  a385692f-22df-40ba-960e-d227b9bdf697:b8538803afdac8e79d2be797bea07d6c4195cbcd5a45a41a6f647ca66816126b (user.py:64)
+auth-service  | 2025-06-04 04:10:18,467 - server - CRITICAL - expiration: 2025-06-05 04:10:18.467614+00:00 (user.py:65)
+auth-service  | 2025-06-04 04:10:18,469 - server - CRITICAL - message='Registration successful. Please check your email to verify your account.' id=13 name='string' email='jamwujustyle@gmail.com' (auth.py:29)
+auth-service  | Message sent to topic user-registered
+auth-service  | INFO:     172.19.0.1:50156 - "POST /auth/register HTTP/1.1" 201 Created
+auth-service  | INFO:     172.18.0.3:59298 - "GET /internal/verification-token/13 HTTP/1.1" 20

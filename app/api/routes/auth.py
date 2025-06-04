@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, HTTPException
+from fastapi import APIRouter, status, HTTPException, Query
 from app.services.auth import register_user, login_user, refresh, verify_user_email
 from app.schemas.user import (
     UserCreate,
@@ -43,11 +43,12 @@ async def register(user: UserCreate):
 
 
 @router.get("/verify-email", status_code=status.HTTP_200_OK)
-async def verify_email_get(user_id: int, token: str):
+async def verify_email_get(user_id: int = Query(...), token: str = Query(...)):
     """GET endpoint for email verification (clickable links)"""
     try:
+        user_data = EmailVerificationRequest(user_id=user_id, token=token)
         async with in_transaction():
-            token_pair = await verify_user_email(user_id, token)
+            token_pair = await verify_user_email(user_data)
             return {
                 "message": "Email verified successfully! You can now login.",
                 "access": token_pair.access,
@@ -64,9 +65,7 @@ async def verify_email_get(user_id: int, token: str):
 async def verify_email(verification_data: EmailVerificationRequest):
     try:
         async with in_transaction():
-            return await verify_user_email(
-                verification_data.user_id, verification_data.token
-            )
+            return await verify_user_email(verification_data)
     except ValueError as ex:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ex))
 
