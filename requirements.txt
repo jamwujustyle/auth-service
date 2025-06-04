@@ -12,7 +12,7 @@ python-jose[cryptography]
 argon2-cffi
 # CONFIG
 pydantic[email] #for validation and type enforcement
-dotenv
+python-dotenv>=1
 Faker
 httpx  #for async (probably)
 # TESTING
