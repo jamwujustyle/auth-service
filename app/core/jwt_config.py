@@ -7,8 +7,8 @@ from fastapi import HTTPException, status
 class JWT:
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALGORITHM = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "50000"))
-    REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "5000000"))
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "5000"))
+    REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "5000"))
     ISSUER = os.getenv("JWT_ISSUER", "auth-service")
 
     @classmethod

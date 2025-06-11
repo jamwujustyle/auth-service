@@ -4,7 +4,7 @@ from ..schemas.user import (
     UserCreateResponse,
     UserLogin,
 )
-from ..core.security import JWTToken
+from ..core.jwt_config import JWT
 from datetime import timedelta
 from ..schemas.verification import (
     TokenRefresh,
@@ -13,9 +13,12 @@ from ..schemas.verification import (
     EmailVerificationRequest,
 )
 from ..configs.logging_config import logger
+from ..core.security import validate_password_strength
 
 
 async def register_user(user_data=UserCreate) -> UserCreateResponse:
+    if not validate_password_strength(user_data.password):
+        raise ValueError("Password must be at least 6 chars")
 
     user = User(
         name=user_data.name,
@@ -24,7 +27,6 @@ async def register_user(user_data=UserCreate) -> UserCreateResponse:
 
     user.set_password(user_data.password)
     await user.save()
-    logger.critical(f"user: {user.__dict__}")
     user.generate_verification_token()  # Generate and set the token
     await user.save()
 
@@ -52,8 +54,8 @@ async def verify_user_email(user_data=EmailVerificationRequest) -> "TokenPair":
         user.verification_token_expires = None
         await user.save()
 
-        access = JWTToken.create_token(data={"sub": str(user_data.user_id)})
-        refresh = JWTToken.create_token(
+        access = JWT.create_refresh_token(data={"sub": str(user_data.user_id)})
+        refresh = JWT.create_access_token(
             data={"sub": str(user_data.user_id)}, expires_delta=timedelta(days=88)
         )
         return TokenPair(access=access, refresh=refresh)
@@ -73,8 +75,8 @@ async def login_user(creds: UserLogin) -> "TokenPair":
     if not user.is_verified:
         raise ValueError("Please verify your email address before logging in")
 
-    access = JWTToken.create_token(data={"sub": str(user.id)})
-    refresh = JWTToken.create_token(
+    access = JWT.create_refresh_token(data={"sub": str(user.id)})
+    refresh = JWT.create_access_token(
         data={"sub": str(user.id)}, expires_delta=timedelta(days=88)
     )
     return TokenPair(
@@ -84,7 +86,7 @@ async def login_user(creds: UserLogin) -> "TokenPair":
 
 
 async def refresh(refresh_token: TokenRefresh) -> "TokenAccess":
-    payload = JWTToken.decode_token(refresh_token.refresh)
+    payload = JWT.decode_token(refresh_token.refresh)
     user_id = payload["sub"]
-    new_access = JWTToken.create_token(data={"sub": str(user_id)})
+    new_access = JWT.create_refresh_token(data={"sub": str(user_id)})
     return TokenAccess(access=new_access)
